@@ -8,22 +8,9 @@ from langchain.llms import OpenAI
 from langchain.chains.question_answering import load_qa_chain
 import sys
 import os
-def parse_args(args):
-    for i, arg in enumerate(args):
-        if arg == '--openai_api_key':
-            return args[i+1]
 
-    return None
-def main():
-    openai_api_key = parse_args(sys.argv)
-    if openai_api_key:
-        os.environ['OPENAI_API_KEY'] = openai_api_key
-    else:
-        print("No API key provided. Exiting.")
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()
+apikey=os.environ.get('OPENAI_API_KEY')
+os.environ['OPENAI_API_KEY'] = str(apikey)
 
 persist_directory = 'db'
 
