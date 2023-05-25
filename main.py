@@ -6,11 +6,20 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import UnstructuredPDFLoader
 from langchain.llms import OpenAI
 from langchain.chains.question_answering import load_qa_chain
+from getpass import getpass
+from dotenv import load_dotenv
 import sys
 import os
+load_dotenv() 
+# 获取环境变量
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-apikey=os.environ.get('OPENAI_API_KEY')
-os.environ['OPENAI_API_KEY'] = str(apikey)
+if OPENAI_API_KEY is None:
+    print("OPENAI_API_KEY is not set")
+    OPENAI_API_KEY = getpass()
+    os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
+else:
+    print(f"OPENAI_API_KEY = {OPENAI_API_KEY}")
 
 persist_directory = 'db'
 
@@ -30,9 +39,11 @@ chain = load_qa_chain(OpenAI(temperature=0.6), chain_type="stuff")
 def run_qa():
     while True:
         query = input()
+        print('type your question: \n')
         docs = vectordb.as_retriever().get_relevant_documents(query)
         output = chain.run(input_documents=docs, question=query)
         print(output)
+        print('------------------')
 try:
     run_qa()
 except Exception as e:
